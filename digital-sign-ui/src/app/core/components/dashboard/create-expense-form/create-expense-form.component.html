@@ -1,8 +1,10 @@
 <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
     <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="email">E-mail</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid E-mail!">
-            <input nz-input formControlName="email" id="email" />
+        <nz-form-label [nzSpan]="6" nzRequired>Descrição</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="Por favor dê uma descrição da despesa!">
+            <nz-textarea-count [nzMaxCharacterCount]="500">
+                <textarea formControlName="description" nz-input rows="3" placeholder=""></textarea>
+            </nz-textarea-count>
         </nz-form-control>
     </nz-form-item>
     <nz-form-item>
