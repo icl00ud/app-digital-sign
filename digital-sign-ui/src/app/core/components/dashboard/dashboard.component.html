@@ -1,0 +1,14 @@
+<div class="table-section">
+    <button nz-button nzType="primary" (click)="null">
+        <span nz-icon nzType="plus" nzTheme="outline"></span>
+        <nz-divider nzType="vertical"></nz-divider>
+        <span>Criar despesa</span>
+    </button>
+    <app-table></app-table>
+</div>
+
+<nz-modal [nzVisible]="true" [nzContent]="modalContent"  nzTitle="Criar despesa"></nz-modal>
+
+<ng-template #modalContent>
+    <app-create-expense-form></app-create-expense-form>
+</ng-template>

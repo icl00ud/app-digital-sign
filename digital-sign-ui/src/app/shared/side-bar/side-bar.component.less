@@ -1,0 +1,43 @@
+@min-sidebar-width: 80px;
+@max-sidebar-hover-width: max-content;
+@max-sidebar-width: none;
+@transition-time: 0.5s;
+
+.side-bar {
+    width: @min-sidebar-width;
+    height: 100vh;
+    max-width: none;
+    min-width: none;
+    transition: width @transition-time;
+    overflow: hidden;
+}
+
+.side-bar:hover {
+    width: 500px;
+
+    ::ng-deep nz-sider {
+        width: min-content !important;
+        transition: @transition-time;
+        flex: 0 0 min-content  !important;
+        max-width: none !important;
+        min-width: min-content  !important
+    }
+}
+
+.collapse {
+    width: @min-sidebar-width !important;
+    transition: @transition-time;
+}
+
+.expand {
+    width: @max-sidebar-hover-width !important;
+    transition: @transition-time;
+}
+
+::ng-deep nz-sider {
+    width: min-content  !important;
+    flex: 0 0 min-content !important;
+    max-width: min-content  !important;
+    min-width: min-content  !important;
+    transition: @transition-time;
+}

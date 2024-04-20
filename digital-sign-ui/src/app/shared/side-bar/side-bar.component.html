@@ -1,0 +1,14 @@
+<div (mouseenter)="toggleCollapsed(true)" (mouseleave)="toggleCollapsed(false)" class="side-bar" [ngClass]="isCollapsed ? 'colapsed' : 'expand'">
+    <ul nz-menu nzMode="inline" nzTheme="dark" [nzInlineCollapsed]="isCollapsed">
+        <li routerLink="/dashboard" routerLinkActive="router-link-active" nz-menu-item nz-tooltip nzTooltipPlacement="right" [nzTooltipTitle]="isCollapsed ? 'Dashboard' : ''"
+            nzSelected>
+            <span nz-icon nzType="dashboard" nzTheme="outline"></span>
+            <span>Dashboard</span>
+        </li>
+        <li nz-menu-item nz-tooltip nzTooltipPlacement="right" [nzTooltipTitle]="isCollapsed ? 'Navigation Two' : ''"
+            nzSelected>
+            <span nz-icon nzType="mail"></span>
+            <span>Navigation One</span>
+        </li>
+    </ul>
+</div>

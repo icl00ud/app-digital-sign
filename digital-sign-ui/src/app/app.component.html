@@ -1,1 +1,8 @@
-<router-outlet></router-outlet>
+<nz-layout>
+    <nz-sider *ngIf="showSideBar">
+        <app-side-bar></app-side-bar>
+    </nz-sider>
+    <nz-content>
+        <router-outlet></router-outlet>
+    </nz-content>
+</nz-layout>
