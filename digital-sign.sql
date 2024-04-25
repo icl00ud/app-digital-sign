@@ -5,9 +5,9 @@
 # https://antares-sql.app/
 # https://github.com/antares-sql/antares
 # 
-# Host: localhost (MySQL Community Server - GPL 8.3.0)
+# Host: 127.0.0.1 (MySQL Community Server - GPL 8.3.0)
 # Database: digital-sign
-# Generation time: 2024-04-19T21:08:23-03:00
+# Generation time: 2024-04-24T22:27:08-03:00
 # ************************************************************
 
 
@@ -35,7 +35,7 @@ CREATE TABLE `TBLDigitalSign` (
   KEY `id_expense fkey` (`id_expense`),
   KEY `FK_CMJ0` (`id_user_signed`),
   CONSTRAINT `id_expense fkey` FOREIGN KEY (`id_expense`) REFERENCES `TBLExpense` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `user signed` FOREIGN KEY (`id_user_signed`) REFERENCES `TBLUser` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `user foreign key` FOREIGN KEY (`id_user_signed`) REFERENCES `TBLUser` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Tabela de assinaturas digitais';
 
 
@@ -59,8 +59,8 @@ CREATE TABLE `TBLExpense` (
   UNIQUE KEY `id` (`id`),
   KEY `id_file` (`id_file`),
   KEY `FK_TMME` (`id_user`),
-  CONSTRAINT `id_file` FOREIGN KEY (`id_file`) REFERENCES `TBLExpenseReceipts` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `user foreign key` FOREIGN KEY (`id_user`) REFERENCES `TBLUser` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `fk user` FOREIGN KEY (`id_user`) REFERENCES `TBLUser` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `id_file` FOREIGN KEY (`id_file`) REFERENCES `TBLExpenseReceipts` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Tabela de despesas';
 
 
@@ -115,7 +115,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `TBLUser`;
 
 CREATE TABLE `TBLUser` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `id_role` tinyint NOT NULL,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `password` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -142,4 +142,4 @@ CREATE TABLE `TBLUser` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
-# Dump completed on 2024-04-19T21:08:23-03:00
+# Dump completed on 2024-04-24T22:27:09-03:00
