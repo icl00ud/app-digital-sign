@@ -1,61 +1,28 @@
 <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
     <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="value" nzRequired>Valor</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Por favor insira um valor!">
+            <input nz-input type="value" id="value" formControlName="value" />
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
         <nz-form-label [nzSpan]="6" nzRequired>Descrição</nz-form-label>
-        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="Por favor dê uma descrição da despesa!">
+        <nz-form-control [nzSpan]="14" nzHasFeedback nzErrorTip="Por favor dê uma descrição da despesa!">
             <nz-textarea-count [nzMaxCharacterCount]="500">
                 <textarea formControlName="description" nz-input rows="3" placeholder=""></textarea>
             </nz-textarea-count>
         </nz-form-control>
     </nz-form-item>
     <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password" nzRequired>Password</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input your password!">
-            <input nz-input type="password" id="password" formControlName="password"
-                (ngModelChange)="updateConfirmValidator()" />
-        </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="checkPassword" nzRequired>Confirm Password</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl">
-            <input nz-input type="password" formControlName="checkPassword" id="checkPassword" />
-            <ng-template #errorTpl let-control>
-                @if (control.errors?.['required']) {
-                Please confirm your password!
-                }
-                @if (control.errors?.['confirm']) {
-                Two passwords that you enter is inconsistent!
-                }
-            </ng-template>
-        </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="nickname" nzRequired
-            nzTooltipTitle="What do you want other to call you">
-            <span>Nickname</span>
-        </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input your nickname!">
-            <input nz-input id="nickname" formControlName="nickname" />
-        </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="phoneNumber" nzRequired>Phone Number</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" [nzValidateStatus]="validateForm.controls['phoneNumber']"
-            nzErrorTip="Please input your phone number!">
-            <nz-input-group [nzAddOnBefore]="addOnBeforeTemplate">
-                <ng-template #addOnBeforeTemplate>
-                    <nz-select formControlName="phoneNumberPrefix" class="phone-select">
-                        <nz-option nzLabel="+86" nzValue="+86"></nz-option>
-                        <nz-option nzLabel="+87" nzValue="+87"></nz-option>
-                    </nz-select>
-                </ng-template>
-                <input formControlName="phoneNumber" id="'phoneNumber'" nz-input />
-            </nz-input-group>
-        </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="website" nzRequired>Website</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input website!">
-            <input nz-input id="website" formControlName="website" placeholder="website" />
+        <nz-form-label nzFor="upload" [nzSpan]="6" nzRequired>Recibo</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+            <nz-upload nzType="drag" [nzMultiple]="true"
+                nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76" (nzChange)="handleChange($event)">
+                <p class="ant-upload-drag-icon">
+                    <span nz-icon nzType="inbox"></span>
+                </p>
+                <p class="ant-upload-text">Clique ou arraste a imagem</p>
+            </nz-upload>
         </nz-form-control>
     </nz-form-item>
 </form>

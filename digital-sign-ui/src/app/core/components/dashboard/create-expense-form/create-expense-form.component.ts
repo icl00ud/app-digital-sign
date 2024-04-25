@@ -1,13 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import { NzFormModule, NzFormTooltipIcon } from 'ng-zorro-antd/form';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzUploadChangeParam, NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
-import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ValidatorFn, Validators } from '@angular/forms';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-create-expense-form',
@@ -18,68 +20,43 @@ import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, Valida
     NzInputModule,
     NzUploadModule,
     NzSelectModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NzIconModule
   ],
   templateUrl: './create-expense-form.component.html',
   styleUrl: './create-expense-form.component.less'
 })
 export class CreateExpenseFormComponent {
-  validateForm: FormGroup<{
-    email: FormControl<string>;
-    password: FormControl<string>;
-    checkPassword: FormControl<string>;
-    nickname: FormControl<string>;
-    phoneNumberPrefix: FormControl<'+86' | '+87'>;
-    phoneNumber: FormControl<string>;
-    website: FormControl<string>;
-    captcha: FormControl<string>;
-    agree: FormControl<boolean>;
-  }>;
-  
-  captchaTooltipIcon: NzFormTooltipIcon = {
-    type: 'info-circle',
-    theme: 'twotone'
-  };
+  @Output() formSubmit: EventEmitter<any> = new EventEmitter<any>();
+  validateForm: FormGroup;
 
   constructor(
-    private fb: NonNullableFormBuilder
+    private fb: FormBuilder,
+    private msg: NzMessageService
   ) {
     this.validateForm = this.fb.group({
-      email: ['', [Validators.email, Validators.required]],
-      password: ['', [Validators.required]],
-      checkPassword: ['', [Validators.required, this.confirmationValidator]],
-      nickname: ['', [Validators.required]],
-      phoneNumberPrefix: '+86' as '+86' | '+87',
-      phoneNumber: ['', [Validators.required]],
-      website: ['', [Validators.required]],
-      captcha: ['', [Validators.required]],
-      agree: [false]
+      value: [0, [Validators.required]],
+      description: ['', [Validators.required]],
     });
   }
 
   submitForm(): void {
     if (this.validateForm.valid) {
-      console.log('submit', this.validateForm.value);
+      this.formSubmit.emit(this.validateForm.value);
     } else {
-      Object.values(this.validateForm.controls).forEach(control => {
-        if (control.invalid) {
-          control.markAsDirty();
-          control.updateValueAndValidity({ onlySelf: true });
-        }
-      });
+      this.validateForm.markAllAsTouched();
     }
   }
 
-  updateConfirmValidator(): void {
-    Promise.resolve().then(() => this.validateForm.controls.checkPassword.updateValueAndValidity());
-  }
-
-  confirmationValidator: ValidatorFn = (control: AbstractControl): { [s: string]: boolean } => {
-    if (!control.value) {
-      return { required: true };
-    } else if (control.value !== this.validateForm.controls.password.value) {
-      return { confirm: true, error: true };
+  handleChange({ file, fileList }: NzUploadChangeParam): void {
+    const status = file.status;
+    if (status !== 'uploading') {
+      console.log(file, fileList);
     }
-    return {};
-  };
+    if (status === 'done') {
+      this.msg.success(`${file.name} file uploaded successfully.`);
+    } else if (status === 'error') {
+      this.msg.error(`${file.name} file upload failed.`);
+    }
+  }
 }
