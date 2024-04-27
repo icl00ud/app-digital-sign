@@ -1,32 +1,24 @@
 <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
-    <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="value" nzRequired>Valor</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Por favor insira um valor!">
-            <input nz-input type="value" id="value" formControlName="value" />
-        </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-        <nz-form-label [nzSpan]="6" nzRequired>Descrição</nz-form-label>
-        <nz-form-control [nzSpan]="14" nzHasFeedback nzErrorTip="Por favor dê uma descrição da despesa!">
-            <nz-textarea-count [nzMaxCharacterCount]="500">
-                <textarea formControlName="description" nz-input rows="3" placeholder=""></textarea>
-            </nz-textarea-count>
-        </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-        <nz-form-label nzFor="upload" [nzSpan]="6" nzRequired>Recibo</nz-form-label>
-        <nz-form-control [nzSpan]="14">
-            <nz-upload 
-                nzAccept="pdf"
-                [nzLimit]="1"
-                nzType="drag" 
-                [nzMultiple]="true"
-                nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76" (nzChange)="handleChange($event)">
-                <p class="ant-upload-drag-icon">
-                    <span nz-icon nzType="inbox"></span>
-                </p>
-                <p class="ant-upload-text">Clique ou arraste a imagem</p>
-            </nz-upload>
-        </nz-form-control>
-    </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="value" nzRequired>Valor</nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Por favor insira um valor!">
+      <input nz-input type="value" id="value" formControlName="value" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="6" nzRequired>Descrição</nz-form-label>
+    <nz-form-control [nzSpan]="14" nzHasFeedback nzErrorTip="Por favor dê uma descrição da despesa!">
+      <nz-textarea-count [nzMaxCharacterCount]="500">
+        <textarea formControlName="description" nz-input rows="3" placeholder=""></textarea>
+      </nz-textarea-count>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label nzFor="upload" [nzSpan]="6" nzRequired>Recibo</nz-form-label>
+    <nz-form-control [nzSpan]="14">
+      <div class="custom-file">
+        <input type="file" class="custom-file-input" id="customFile" (change)="onChange($event)" multiple />
+      </div>
+    </nz-form-control>
+  </nz-form-item>
 </form>

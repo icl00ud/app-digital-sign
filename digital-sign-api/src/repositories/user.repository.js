@@ -9,9 +9,9 @@ const getAllUsers = async () => {
   }
 };
 
-const getUserById = async (id) => {
+const getUserByEmailAndPassword = async (userData) => {
   try {
-    const [rows, fields] = await db.execute('SELECT * FROM TBLUser WHERE id = ?', [id]);
+    const [rows, fields] = await db.execute('SELECT * FROM TBLUser WHERE email = ? AND password = ?', [userData.email, userData.password]);
     if (rows.length > 0) {
       return rows[0];
     } else {
@@ -24,11 +24,20 @@ const getUserById = async (id) => {
 
 const createUser = async (userData) => {
   try {
-    const { name, password, email, id_role } = userData;
-    const [result] = await db.execute('INSERT INTO TBLUser (id_role, name, password, email) VALUES (?, ?, ?, ?)', [id_role, name, password, email]);
+    const { name, password, email, role, manager } = userData;
+    const [result] = await db.execute('INSERT INTO TBLUser (id_role, id_manager, name, password, email) VALUES (?, ?, ?, ?, ?)', [role, manager, name, password, email]);
     const newUserId = result.insertId;
     const [newUser] = await db.execute('SELECT * FROM TBLUser WHERE id = ?', [newUserId]);
     return newUser[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getManagers = async () => {
+  try {
+    const [rows, fields] = await db.execute('SELECT * FROM TBLUser WHERE id_role = 2');
+    return rows;
   } catch (error) {
     throw error;
   }
@@ -49,7 +58,8 @@ const deleteUserById = async (id) => {
 
 module.exports = {
   getAllUsers,
-  getUserById,
+  getUserByEmailAndPassword,
   createUser,
   deleteUserById,
+  getManagers
 };

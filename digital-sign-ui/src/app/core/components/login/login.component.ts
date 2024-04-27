@@ -4,6 +4,8 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { Router, RouterModule } from '@angular/router';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -12,30 +14,39 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     ReactiveFormsModule,
     NzFormModule,
     NzInputModule,
-    NzIconModule
+    NzIconModule,
+    RouterModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.less'
 })
 export class LoginComponent {
   validateForm: FormGroup<{
-    userName: FormControl<string>;
+    email: FormControl<string>;
     password: FormControl<string>;
     remember: FormControl<boolean>;
   }> = this.fb.group({
-    userName: ['', [Validators.required]],
+    email: ['', [Validators.required]],
     password: ['', [Validators.required]],
     remember: [true]
   }) as FormGroup<{
-    userName: FormControl<string>;
+    email: FormControl<string>;
     password: FormControl<string>;
     remember: FormControl<boolean>;
   }>;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   submitForm(): void {
     if (this.validateForm.valid) {
+      this.userService.login(this.validateForm.value).subscribe((res) => {
+        localStorage.setItem('user', JSON.stringify(res));
+        window.location.href = '/dashboard';
+      });
     } else {
       Object.values(this.validateForm.controls).forEach(control => {
         if (control.invalid) {

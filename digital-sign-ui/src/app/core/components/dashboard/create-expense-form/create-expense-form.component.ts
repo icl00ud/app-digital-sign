@@ -3,13 +3,13 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzUploadChangeParam, NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { FormGroup, Validators } from '@angular/forms';
+import { UploadFileService } from '../../../services/upload-file.service';
 
 @Component({
   selector: 'app-create-expense-form',
@@ -18,7 +18,6 @@ import { FormGroup, Validators } from '@angular/forms';
     CommonModule,
     NzFormModule,
     NzInputModule,
-    NzUploadModule,
     NzSelectModule,
     ReactiveFormsModule,
     NzIconModule
@@ -28,11 +27,15 @@ import { FormGroup, Validators } from '@angular/forms';
 })
 export class CreateExpenseFormComponent {
   @Output() formSubmit: EventEmitter<any> = new EventEmitter<any>();
+
   validateForm: FormGroup;
+  files: Set<File> = new Set();
+  progress = 0;
 
   constructor(
     private fb: FormBuilder,
-    private msg: NzMessageService
+    private msg: NzMessageService,
+    private uploadFileService: UploadFileService
   ) {
     this.validateForm = this.fb.group({
       value: [0, [Validators.required]],
@@ -42,21 +45,25 @@ export class CreateExpenseFormComponent {
 
   submitForm(): void {
     if (this.validateForm.valid) {
+      console.log( this.validateForm.value )
       this.formSubmit.emit(this.validateForm.value);
     } else {
       this.validateForm.markAllAsTouched();
     }
   }
 
-  handleChange({ file, fileList }: NzUploadChangeParam): void {
-    const status = file.status;
-    if (status !== 'uploading') {
-      console.log(file, fileList);
+  onChange(event: any) {
+    console.log(event);
+
+    const selectedFiles = <FileList>event.srcElement.files;
+
+    const fileNames = [];
+    this.files = new Set();
+    for (let i = 0; i < selectedFiles.length; i++) {
+      fileNames.push(selectedFiles[i].name);
+      this.files.add(selectedFiles[i]);
     }
-    if (status === 'done') {
-      this.msg.success(`${file.name} file uploaded successfully.`);
-    } else if (status === 'error') {
-      this.msg.error(`${file.name} file upload failed.`);
-    }
+
+    this.progress = 0;
   }
 }

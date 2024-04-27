@@ -1,8 +1,46 @@
-<div class="table-section">
-    <button nz-button nzType="primary" (click)="showModal()">
-        <span nz-icon nzType="plus" nzTheme="outline"></span>
-        <nz-divider nzType="vertical"></nz-divider>
-        <span>Criar despesa</span>
+<div class="container">
+  <div class="header">
+    <h1>Olá, {{ userName }}!</h1>
+    <button nz-button nzType="default" (click)="logout()" class="logout-button">
+      Deslogar
     </button>
-    <app-table></app-table>
+  </div>
+  <div class="content">
+    <div class="button-section">
+      <button nz-button nzType="primary" (click)="showModal()" class="create-button">
+        <span nz-icon nzType="plus" nzTheme="outline"></span>
+        Criar Despesa
+      </button>
+    </div>
+    <app-table [data]="tableData" [isManager]="isManager"></app-table>
+  </div>
 </div>
+
+<ng-template #modalFormTemplate>
+  <form nz-form [formGroup]="formGroup" (ngSubmit)="submitForm()">
+    <nz-form-item>
+      <nz-form-label for="valor" [nzRequired]="true">Valor</nz-form-label>
+      <nz-form-control nzErrorTip="Por favor, insira o valor">
+        <input nz-input formControlName="valor" id="valor" type="text">
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label for="descricao" [nzRequired]="true">Descrição</nz-form-label>
+      <nz-form-control nzErrorTip="Por favor, insira a descrição">
+        <textarea nz-input formControlName="descricao" id="descricao" type="text"></textarea>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label for="arquivoPDF" [nzRequired]="true">Arquivo PDF</nz-form-label>
+      <nz-form-control nzErrorTip="Por favor, faça o upload do arquivo PDF">
+        <nz-upload [nzBeforeUpload]="beforeUpload" [nzRemove]="removeFile" nzListType="picture-card"
+          [nzMultiple]="false" [nzFileList]="fileList" [nzShowButton]="fileList.length < 1"
+          [nzFileType]="'application/pdf'">
+          <div>
+            <span><i nz-icon nzType="plus"></i>Upload</span>
+          </div>
+        </nz-upload>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</ng-template>

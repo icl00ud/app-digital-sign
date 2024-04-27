@@ -1,0 +1,59 @@
+<div class="container">
+  <h1>Registrar</h1>
+  <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+    <nz-form-item>
+      <nz-form-control [nzSm]="24" [nzXs]="24">
+        <input nz-input formControlName="email" id="email" placeholder="E-mail"/>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control [nzSm]="24" [nzXs]="24">
+        <input nz-input formControlName="name" id="name" placeholder="Nome completo"/>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control [nzSm]="24" [nzXs]="24">
+        <nz-input-group>
+          <input formControlName="password" nz-input type="password" placeholder="Senha" />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control [nzSm]="24" [nzXs]="24">
+        <nz-select formControlName="role" nzShowSearch nzAllowClear nzPlaceHolder="Selecione o cargo">
+          <nz-option nzLabel="Funcionário" nzValue="1"></nz-option>
+          <nz-option nzLabel="Gerente" nzValue="2"></nz-option>
+          <nz-option nzLabel="Diretor" nzValue="3"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control [nzSm]="24" [nzXs]="24">
+        <nz-select formControlName="manager" nzShowSearch nzAllowClear nzPlaceHolder="Selecione seu responsável">
+          @for (manager of managers; track $index) {
+            <nz-option nzLabel="{{ manager.name }}" nzValue="{{ manager.id }}"></nz-option>
+          }
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <div class="button-container">
+      <nz-form-item nz-row class="register-area">
+        <nz-form-control [nzSpan]="20" [nzOffset]="2">
+          <a routerLink="/login"><button class="login-button" nz-button nzType="primary">Logar</button></a>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item nz-row class="register-area">
+        <nz-form-control [nzSpan]="20" [nzOffset]="2">
+          <button nz-button nzType="primary">Registrar</button>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </form>
+
+</div>

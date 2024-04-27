@@ -1,4 +1,5 @@
 const expenseService = require('../services/expense.service');
+const db = require('../config/db.config');
 
 const getAllExpenses = async (req, res) => {
     try {
@@ -9,22 +10,37 @@ const getAllExpenses = async (req, res) => {
     }
 };
 
+const getAllEmployeeExpensesByUserId = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const expenses = await expenseService.getAllEmployeeExpensesByUserId(userId);
+        res.status(200).json(expenses);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar as despesas.' });
+    }
+}
+
+const getAllManagerExpensesByUserId = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const expenses = await expenseService.getAllManagerExpensesByUserId(userId);
+        res.status(200).json(expenses);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar as despesas.' });
+    }
+}
+
 const createExpense = async (req, res) => {
     try {
-        const newExpense = await expenseService.createExpense(req.body);
-        res.status(201).json(newExpense);
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao criar a despesa.' });
-    }
-};
+        if (!req.file)
+            return res.status(400).json({ error: 'Nenhum arquivo enviado.' });
 
-const updateExpense = async (req, res) => {
-    try {
-        const expenseId = req.params.id;
-        const updatedExpense = await expenseService.updateExpense(expenseId, req.body);
-        res.status(200).json(updatedExpense);
+        const result = await expenseService.createExpense(req.body, req.file);
+        console.log('result', result)
+        res.status(201).json({ message: 'Despesa criada com sucesso.' });
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao atualizar a despesa.' });
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao criar a despesa.' });
     }
 };
 
@@ -38,9 +54,20 @@ const deleteExpense = async (req, res) => {
     }
 };
 
+const signExpense = async (req, res) => {
+    try {
+        const result = await expenseService.signExpense(req.body);
+        res.status(200).json({ message: 'Despesa assinada com sucesso.' });
+    } catch (error) {
+        res.status(500).json
+    }
+};
+
 module.exports = {
     getAllExpenses,
+    getAllManagerExpensesByUserId,
+    getAllEmployeeExpensesByUserId,
     createExpense,
-    updateExpense,
+    signExpense,
     deleteExpense
 };

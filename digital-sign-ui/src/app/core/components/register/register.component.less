@@ -1,0 +1,58 @@
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  /* Defina a largura do formulário conforme necessário */
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.container h1 {
+  text-align: center;
+  font-size: 3rem;
+  margin-bottom: 30px;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  nz-form-item {
+    width: 75%;
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.button-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+
+  .login-button {
+    background-color: #67abf5 !important;
+  }
+}

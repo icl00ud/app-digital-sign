@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { Person } from '../../utils/interfaces/person.interface';
+import { ExpenseService } from '../../core/services/expense.service';
 
 @Component({
   selector: 'app-table',
@@ -16,24 +16,17 @@ import { Person } from '../../utils/interfaces/person.interface';
 })
 
 export class TableComponent {
-  listOfData: Person[] = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park'
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park'
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park'
-    }
-  ];
+  @Input() data: any = [];
+  @Input() isManager: boolean = false;
+
+  constructor(
+    private expenseService: ExpenseService
+  ) { }
+
+  assinarDespesa(expense: any) {
+    console.log('Assinando despesa', expense);
+    this.expenseService.signExpense(expense).subscribe((response) => {
+      console.log('Despesa assinada com sucesso', response);
+    });
+  }
 }

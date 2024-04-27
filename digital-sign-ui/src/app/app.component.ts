@@ -29,7 +29,7 @@ export class AppComponent {
 
   ngOnInit() {
     if(this.location.path() === '/login' || this.location.path() === '/register'){
-      this.showSideBar = true;
+      this.showSideBar = false;
     }
   }
 }
