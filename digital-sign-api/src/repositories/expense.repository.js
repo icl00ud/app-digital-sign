@@ -71,8 +71,8 @@ const createExpense = async (expenseData, file) => {
         const size = file.size;
         const pendente = 'Pendente';
 
-        const resultTblExpenseReceipts = await db.execute('INSERT INTO TBLExpenseReceipts (mimetype, filename, name, file, file_extension, size) VALUES (?, ?, ?, ?, ?, ?)', [mimetype, filename, originalname, fileData, file_extension, size]);
-        const resultTblExpense = await db.execute('INSERT INTO TBLExpense (id_user, id_file, description, dt_creation, value, status) VALUES (?, ?, ?, ?, ?, ?)', [JSON.parse(userData).id, resultTblExpenseReceipts[0].insertId, descricao, now, valor, pendente]);
+        const resultTblExpenseReceipts = await db.execute('INSERT INTO TBLExpenseReceipts (mimetype, filename, name, file, file_extension, size, is_signed, id_file_signed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [mimetype, filename, originalname, fileData, file_extension, size, 0, null]);
+        const resultTblExpense = await db.execute('INSERT INTO TBLExpense (id_user, id_file, id_file_signed, is_signed, description, dt_creation, value, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [JSON.parse(userData).id, resultTblExpenseReceipts[0].insertId, null, 0, descricao, now, valor, pendente]);
 
         fs.unlinkSync(file.path);
 
@@ -95,15 +95,25 @@ const deleteExpense = async (expenseId) => {
 
 const getExpenseFile = async (id_file) => {
     try {
-        const [result] = await db.execute('SELECT file FROM TBLExpenseReceipts WHERE id = ?', [id_file]);
+        const [result] = await db.execute('SELECT * FROM TBLExpenseReceipts WHERE id = ?', [id_file]);
         if (result.length === 0)
             throw new Error('Despesa não encontrada ou não pôde ser assinada.');
 
-        return result[0].file;
+        return result[0];
     } catch (error) {
         throw error;
     }
 };
+
+const getExpenseByIdFile = async (id_file) => {
+    try {
+        const [rows, fields] = await db.execute('SELECT * FROM TBLExpense WHERE id_file = ?', [id_file]);
+        return rows[0];
+    }
+    catch (error) {
+        throw error;
+    }
+}
 
 const getManagerByExpenseId = async (id_file) => {
     try {
@@ -123,12 +133,52 @@ FROM
     }
 };
 
+const saveSignedPdf = async (pdfSigned, pdfNotSigned) => {
+    try {
+        const fileName = pdfNotSigned.filename + '_signed.pdf';
+        const params = [
+            pdfNotSigned.mimetype,
+            fileName,
+            pdfNotSigned.name,
+            pdfSigned,
+            pdfNotSigned.file_extension,
+            pdfNotSigned.size,
+            1,
+            null
+        ];
+
+
+        const [result] = await db.execute(
+            'INSERT INTO TBLExpenseReceipts (mimetype, filename, name, file, file_extension, size, is_signed, id_file_signed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            params
+        );
+
+        await db.execute(
+            'UPDATE TBLExpense SET status = ?, is_signed = ?, id_file_signed = ? WHERE id_file = ?' ,
+            ['Aprovado', 1, result.insertId, pdfNotSigned.id]
+        );
+
+        await db.execute(
+            'UPDATE TBLExpenseReceipts SET id_file_signed = ? WHERE id = ?', [result.insertId, pdfNotSigned.id]
+        );
+
+        if (result.affectedRows === 0)
+            throw new Error('Despesa não encontrada ou não pôde ser assinada.');
+
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     getAllExpenses,
     getAllEmployeeExpensesByUserId,
     getAllManagerExpensesByUserId,
     createExpense,
     getExpenseFile,
+    getExpenseByIdFile,
     deleteExpense,
-    getManagerByExpenseId
+    getManagerByExpenseId,
+    saveSignedPdf
 };

@@ -37,7 +37,7 @@ export class RegisterComponent {
     password: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     role: ['', [Validators.required]],
-    manager: ['', [Validators.required]]
+    manager: ['']
   }) as FormGroup<{
     name: FormControl<string>;
     password: FormControl<string>;

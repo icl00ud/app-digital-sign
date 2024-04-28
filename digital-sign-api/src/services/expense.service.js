@@ -2,7 +2,7 @@ const expenseRepository = require('../repositories/expense.repository');
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { PDFDocument, PDFName, PDFHexString } = require('pdf-lib');
+const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 
 const getAllExpenses = async () => {
     try {
@@ -47,17 +47,14 @@ const deleteExpense = async (expenseId) => {
     }
 };
 
+
 const signExpense = async (req) => {
     try {
-        // Obtenha o PDF da despesa
         const id_file = req.id_file;
         const manager = await expenseRepository.getManagerByExpenseId(id_file);
-        const pdfBase64 = await expenseRepository.getExpenseFile(id_file);
+        const pdfReceipt = await expenseRepository.getExpenseFile(id_file);
 
-        // Decodifique o PDF base64 para bytes
-        const pdfBytes = Buffer.from(pdfBase64, 'base64');
-
-        // Carregue o PDF para manipulação
+        const pdfBytes = Buffer.from(pdfReceipt.file, 'base64');
         const pdfDoc = await PDFDocument.load(pdfBytes);
 
         // Gerar uma chave privada e pública usando OpenSSL
@@ -70,37 +67,41 @@ const signExpense = async (req) => {
         const pdfPath = process.env.PDF_PATH;
         const signaturePath = process.env.SIGNATURE_PATH;
         fs.writeFileSync(pdfPath, pdfBytes);
-        const signatureHex = await signPdfWithOpenSSL(pdfPath, privateKeyPath, signaturePath);
+        await signPdfWithOpenSSL(pdfPath, privateKeyPath, signaturePath);
 
-        // Adicione a assinatura digital ao PDF
+        // Adicionar a assinatura digital a todas as páginas do PDF
         const signerName = manager.name;
-        const pageToSign = 0; // Página do PDF onde a assinatura será inserida
+        for (let i = 0; i < pdfDoc.getPageCount(); i++) {
+            const page = pdfDoc.getPage(i);
+            const textSize = 10;
+            const textX = 100;
+            const textY = 100 + (textSize * 2 * i);
 
-        // Obtenha a página para assinar
-        const page = pdfDoc.getPages()[pageToSign];
+            const signatureText = `Assinado por: ${signerName}`;
+            const signatureStyle = {
+                font: await pdfDoc.embedFont(StandardFonts.Helvetica),
+                size: 12,
+                color: rgb(0, 0, 0),
+                borderColor: rgb(0, 0, 0),
+                borderWidth: 1,
+                x: textX,
+                y: textY,
+                width: signatureText.length * textSize * 0.6 + 10,
+                height: textSize + 10,
+            };
 
-        // Adicione a assinatura como uma anotação de texto na página
-        const textSize = 10;
-        const textWidth = signerName.length * textSize * 0.6;
-        const textHeight = textSize;
-        const textX = 100;
-        const textY = 100;
-        const text = `Assinado por: ${signerName}`;
-        page.drawText(text, { x: textX, y: textY, size: textSize });
-
-        // Salvar o PDF assinado
-        const signedPdfBytes = await pdfDoc.save();
-
-        // Salvar o PDF assinado na pasta /uploads
-        const uploadDir = path.join(__dirname, '..', 'uploads');
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
+            drawSignature(page, signatureText, signatureStyle);
         }
-        const signedPdfPath = path.join(uploadDir, `signed_expense_${id_file}.pdf`);
-        fs.writeFileSync(signedPdfPath, signedPdfBytes);
 
-        // Retornar o caminho do PDF assinado
-        return signedPdfPath;
+        const signedPdfBytes = await pdfDoc.save();
+        const filePath = path.join(__dirname, '../../uploads/', fileName);
+        const signedPdfBase64 = Buffer.from(signedPdfBytes).toString('base64');
+        const fileName = `${id_file}_signed.pdf`;
+        fs.writeFileSync(filePath, signedPdfBase64, 'base64');
+
+        await expenseRepository.saveSignedPdf(signedPdfBase64, pdfReceipt);
+
+        return true;
     } catch (error) {
         console.error(error);
         throw new Error('Erro ao assinar a despesa.');
@@ -123,6 +124,25 @@ const signPdfWithOpenSSL = async (pdfPath, privateKeyPath, signaturePath) => {
         console.error(error);
         throw new Error('Erro ao assinar o PDF.');
     }
+};
+
+const drawSignature = (page, text, style) => {
+    page.drawText(text, {
+        x: style.x,
+        y: style.y,
+        size: style.size,
+        font: style.font,
+        color: style.color,
+    });
+
+    page.drawRectangle({
+        x: style.x - 5,
+        y: style.y - 5,
+        width: style.width,
+        height: style.height,
+        borderColor: style.borderColor,
+        borderWidth: style.borderWidth,
+    });
 };
 
 module.exports = {

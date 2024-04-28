@@ -24,7 +24,8 @@ const getUserByEmailAndPassword = async (userData) => {
 
 const createUser = async (userData) => {
   try {
-    const { name, password, email, role, manager } = userData;
+    var { name, password, email, role, manager } = userData;
+    manager === '' ? manager = null : manager;
     const [result] = await db.execute('INSERT INTO TBLUser (id_role, id_manager, name, password, email) VALUES (?, ?, ?, ?, ?)', [role, manager, name, password, email]);
     const newUserId = result.insertId;
     const [newUser] = await db.execute('SELECT * FROM TBLUser WHERE id = ?', [newUserId]);

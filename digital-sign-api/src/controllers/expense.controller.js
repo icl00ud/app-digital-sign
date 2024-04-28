@@ -57,7 +57,7 @@ const deleteExpense = async (req, res) => {
 const signExpense = async (req, res) => {
     try {
         const result = await expenseService.signExpense(req.body);
-        res.status(200).json({ message: 'Despesa assinada com sucesso.' });
+        res.status(200).json({ message: 'Despesa assinada com sucesso.', result});
     } catch (error) {
         res.status(500).json
     }
